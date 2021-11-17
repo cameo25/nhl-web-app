@@ -10,6 +10,7 @@ import Home from './Home';
 import Team from './Team';
 import Player from './Player';
 import NavBar from "./NavBar";  
+import Standings from "./Standings";
 
 export default function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -59,6 +60,9 @@ export default function App() {
           </Route>
           <Route exact path="/team/:teamId/player/:playerId">
             <Player />
+          </Route>
+          <Route exact path="/standings">
+            <Standings />
           </Route>
         </Switch>
       </div>
