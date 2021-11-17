@@ -1,0 +1,11 @@
+.cursor-pointer{
+  cursor: pointer;
+}
+
+.card-header:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.card-header-inner {
+  background-color: white;
+}
