@@ -22,6 +22,10 @@ export default function Standings() {
         (result) => {
           let teamRecords = getTeamRecords(result.records);
           sessionStorage.setItem("standings", JSON.stringify(teamRecords));
+
+          sessionStandings = _.orderBy(teamRecords, (obj) => parseInt(obj.leagueRank, 10), "asc");
+          setStandings(sessionStandings);
+
           setIsLoaded(true);
         },
         // Note: it's important to handle errors here
