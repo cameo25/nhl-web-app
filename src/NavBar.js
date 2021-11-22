@@ -1,17 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Navbar from "react-bootstrap/Navbar";
+import {NavLink} from "react-router-dom";
 
 const NavBar = () => {
 
   return (
-    <div>
-        <span>
-          <Link to="/">Home</Link>&nbsp;
-        </span>
-        <span>
-          <Link to="/standings">Standings</Link>&nbsp;
-        </span>
-    </div>
+    <Navbar bg="light">
+        <NavLink to="/" className="nav-link">Home</NavLink>
+        <NavLink to="/standings" className="nav-link">Standings</NavLink>
+    </Navbar>
   );
 };
 

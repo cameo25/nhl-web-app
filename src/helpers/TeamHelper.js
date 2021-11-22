@@ -25,3 +25,14 @@ export function getPlayer(teams, teamId, playerId) {
   }
   return player;
 }
+
+export function getTeamStats(teams, teamId, gameType) {
+  let split = [];
+  if (!_.isEmpty(teams)) {
+    let team = _.head(teams.filter((team) => team.id === teamId));
+    let myTeamStats = _.head(team.teamStats.filter((teamStat) => teamStat.type.gameType.id === gameType));
+    split = _.head(myTeamStats.splits);
+    console.log(split.stat);
+  }
+  return split.stat;
+}

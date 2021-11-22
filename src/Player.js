@@ -51,9 +51,6 @@ export default function Player() {
           (result) => {
             setVsTeam20202021(result);
           },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
           (error) => {
             setError(error);
           }
@@ -69,9 +66,6 @@ export default function Player() {
           (result) => {
             setVsTeam20192020(result);
           },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
           (error) => {
             setError(error);
           }
@@ -87,9 +81,6 @@ export default function Player() {
           (result) => {
             setOnPace(result);
           },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
           (error) => {
             setError(error);
           }
@@ -105,9 +96,6 @@ export default function Player() {
           (result) => {
             setRankings(result);
           },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
           (error) => {
             setError(error);
           }

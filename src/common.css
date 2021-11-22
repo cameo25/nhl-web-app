@@ -9,3 +9,13 @@
 .card-header-inner {
   background-color: white;
 }
+
+.nav-link {
+  padding: 0.5rem 0.5rem;
+}
+
+.navbar {
+  padding-left: 0em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}

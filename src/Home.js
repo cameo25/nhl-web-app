@@ -6,43 +6,41 @@ import {Link} from "react-router-dom";
 
 let debounceWrapper = [];
 
-export default function Home() {
+export default function Home(props) {
   const [inputValue, setInputValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [playerTeamIdMap, setPlayerTeamIdMap] = useState({});
 
-  useEffect(() => {
-    debounceWrapper = _.debounce(function(event, teams){
-      let search = event.target.value.toLowerCase();
-      if(search.length > 2) {
-        let results = teams.map(function(team) {
-          return team.roster.roster.filter(function(player) {
-            let includesBoolean = _.includes(player.person.fullName.toLowerCase(), search);
-            if (includesBoolean) {
-              let tempMap = playerTeamIdMap;              
-              tempMap[player.person.id] = team.id;
-              setPlayerTeamIdMap(tempMap);
-            }
-            return includesBoolean;
-          });
+  debounceWrapper = _.debounce(function(event, teams){    
+    let search = event.target.value.toLowerCase();
+    if(search.length > 2) {
+      let results = teams.map(function(team) {
+        return team.roster.roster.filter(function(player) {
+          let includesBoolean = _.includes(player.person.fullName.toLowerCase(), search);
+          if (includesBoolean) {
+            let tempMap = playerTeamIdMap;              
+            tempMap[player.person.id] = team.id;
+            setPlayerTeamIdMap(tempMap);
+          }
+          return includesBoolean;
         });
-        setSearchResults(_.flatMap(_.omitBy(results, _.isNil)));
-      }
-    }, 500);
-  },[]);
+      });
+      setSearchResults(_.flatMap(_.omitBy(results, _.isNil)));
+    }
+  }, 500);
 
   function handleChange(event) {
     event.persist();
     setInputValue(event.target.value);
-    debounceWrapper(event, JSON.parse(sessionStorage.getItem("teams")));
+    debounceWrapper(event, props.teams);
   }
 
   function renderSearch() {
     let listResults = [];
     if(!_.isEmpty(searchResults)) {
       listResults = _.map(searchResults, (player) =>
-        <Link to={"/team/" + playerTeamIdMap[player.person.id] + "/player/" + player.person.id}>
-          <ListGroup.Item key={player.person.id} action>
+        <Link key={player.person.id} to={"/team/" + playerTeamIdMap[player.person.id] + "/player/" + player.person.id}>
+          <ListGroup.Item action>
             {player.person.fullName}
           </ListGroup.Item>
         </Link>
@@ -54,7 +52,7 @@ export default function Home() {
           <Form.Group>
             <Form.Label>Search For Player</Form.Label>
             <Form.Control type="text" onChange={handleChange} value={inputValue}/>
-            <Form.Text>Start typing to see results</Form.Text>
+            <Form.Text>Type at least three characters</Form.Text>
           </Form.Group>
         </Form>
         <ListGroup>
@@ -79,6 +77,8 @@ export default function Home() {
   return (
     <div>
       {renderSearch()}
+      <h4>Teams</h4>
+      {renderTeams(props.teams)}
     </div>
     
   );

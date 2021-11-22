@@ -11,10 +11,12 @@ import Team from './Team';
 import Player from './Player';
 import NavBar from "./NavBar";  
 import Standings from "./Standings";
+import {getTeamRecords} from "./helpers/StandingsHelper";
 
 export default function App() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const [teams, setTeams] = useState([]);
+  const [standings, setStandings] = useState([]);
 
   useEffect(() => { 
     if (_.isEmpty(sessionStorage.getItem("teams"))) {
@@ -23,24 +25,45 @@ export default function App() {
       .then(
         (result) => {
           sessionStorage.setItem("teams", JSON.stringify(result.teams));
-          setIsLoaded(true);
+          setTeams(result.teams);
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
         (error) => {
-          setIsLoaded(true);
+          setError(error);
+        }
+      )
+    } else {
+      setTeams(JSON.parse(sessionStorage.getItem("teams")));
+    }
+
+    if (_.isEmpty(sessionStorage.getItem("standings"))) {
+      fetch("https://statsapi.web.nhl.com/api/v1/standings?season=20212022")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          let teamRecords = getTeamRecords(result.records);
+          sessionStorage.setItem("standings", JSON.stringify(teamRecords));
+
+          let sessionStandings = _.orderBy(teamRecords, (obj) => parseInt(obj.leagueRank, 10), "asc");
+          setStandings(sessionStandings);
+        },
+        (error) => {
           setError(error);
         }
       )
     }
+    else {
+      let sessionStandings = _.orderBy(JSON.parse(sessionStorage.getItem("standings")), (obj) => parseInt(obj.leagueRank, 10), "asc");
+      setStandings(sessionStandings);
+    }
+
 
   },[]);
+
 
   return (
 
     <Router>
-      <div className="App">
+      <div className="App container-fluid">
         <header>
           <NavBar />
         </header>
@@ -53,16 +76,16 @@ export default function App() {
         */}
         <Switch>
           <Route exact path="/">
-            <Home />
+            <Home teams={teams}/>
           </Route>
           <Route exact path="/team/:teamId">
-            <Team />
+            <Team teams={teams}/>
           </Route>
           <Route exact path="/team/:teamId/player/:playerId">
             <Player />
           </Route>
           <Route exact path="/standings">
-            <Standings />
+            <Standings standings={standings} setStandings={setStandings}/>
           </Route>
         </Switch>
       </div>
