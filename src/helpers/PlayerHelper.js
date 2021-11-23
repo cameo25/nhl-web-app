@@ -1,4 +1,5 @@
 import _ from "lodash";
+import {roundWhenNeeded} from "./CalcHelper";
 
 export function getPlayerStats(response) {
   let playerStats = [];
@@ -19,7 +20,7 @@ export function getFantasyPointsPlayer(goals, assists, powerPlay, shots, hits, b
   const hitPoints = hits * 0.5;
   const blockPoints = blocks * 0.5;
 
-  return goalPoints + assistPoints + powerPlayPoints + shotPoints + hitPoints + blockPoints;
+  return roundWhenNeeded(goalPoints + assistPoints + powerPlayPoints + shotPoints + hitPoints + blockPoints);
 }
 
 export function getFantasyPointsGoalie(wins, goalsAgainst, saves, shutouts) {
@@ -28,5 +29,5 @@ export function getFantasyPointsGoalie(wins, goalsAgainst, saves, shutouts) {
   const savePoints = saves * 0.6;
   const shutoutPoints = shutouts * 2;
 
-  return winPoints + gaPoints + savePoints + shutoutPoints;
+  return roundWhenNeeded(winPoints + gaPoints + savePoints + shutoutPoints);
 }
