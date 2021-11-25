@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {useParams, Link} from "react-router-dom";
 import _ from "lodash";
 import {getPlayer, getTeam} from "./helpers/TeamHelper";
 import PlayerVsTeam from './PlayerVsTeam';
 import OnPaceRegularSeason from './OnPaceRegularSeason';
 import Rankings from './Rankings';
-import SeasonStats from './SeasonStats';
+import GameLogStats from './GameLogStats';
 import MonthlyStats from './MonthlyStats';
 import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
@@ -19,9 +19,24 @@ export default function Player() {
   const [vsTeam20202021, setVsTeam20202021] = useState([]);
   const [onPace, setOnPace] = useState([]);
   const [rankings, setRankings] = useState([]);
-  const [seasonStats, setSeasonStats] = useState([]);
   const [monthlyStats, setMonthlyStats] = useState([]);
+  const [gameLogStats, setGameLogStats] = useState([]);
   const [error, setError] = useState(null);
+
+  useEffect(() => { 
+    if(_.isEmpty(gameLogStats)) {
+      fetch("https://statsapi.web.nhl.com/api/v1/people/"+ playerId + "/stats?stats=gameLog&season=20212022")
+      .then(res => res.json())
+        .then(
+          (result) => {
+            setGameLogStats(result);
+          },
+          (error) => {
+            setError(error);
+          }
+        )
+    }
+  },[]);
 
  function renderPlayer(teams) {
     let player = getPlayer(teams, teamId, playerId);
@@ -47,23 +62,8 @@ export default function Player() {
     }
   }
 
-  function onClickGameLogSeason() {
-    if(_.isEmpty(vsTeam20202021)) {
-      fetch("https://statsapi.web.nhl.com/api/v1/people/"+ playerId + "/stats?stats=gameLog&season=20212022")
-      .then(res => res.json())
-        .then(
-          (result) => {
-            setSeasonStats(result);
-          },
-          (error) => {
-            setError(error);
-          }
-        )
-    }
-  }
-
   function onClickGameLogMonthly() {
-    if(_.isEmpty(vsTeam20202021)) {
+    if(_.isEmpty(monthlyStats)) {
       fetch("https://statsapi.web.nhl.com/api/v1/people/"+ playerId + "/stats?stats=byMonth&season=20212022")
       .then(res => res.json())
         .then(
@@ -139,13 +139,13 @@ export default function Player() {
 
   function renderOptions() {
     return(
-      <Accordion>
+      <Accordion defaultActiveKey="103">
         <Card>
-          <Accordion.Toggle as={Card.Header} className="cursor-pointer" onClick={onClickGameLogSeason} eventKey="103">
+          <Accordion.Toggle as={Card.Header} className="cursor-pointer" eventKey="103">
             Season Stats
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="103">
-            <SeasonStats seasonStats={seasonStats} playerPosition={playerPosition} />
+            <GameLogStats gameLogStats={gameLogStats} numberOfGames={-1} playerPosition={playerPosition} />
           </Accordion.Collapse>
         </Card>
         <Card>
@@ -154,6 +154,22 @@ export default function Player() {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="104">
             <MonthlyStats monthlyStats={monthlyStats} playerPosition={playerPosition} />
+          </Accordion.Collapse>
+        </Card>
+        <Card>
+          <Accordion.Toggle as={Card.Header} className="cursor-pointer" eventKey="105">
+            Last 7 Games Stats
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey="105">
+            <GameLogStats gameLogStats={gameLogStats} numberOfGames={7} playerPosition={playerPosition} />
+          </Accordion.Collapse>
+        </Card>
+        <Card>
+          <Accordion.Toggle as={Card.Header} className="cursor-pointer" eventKey="106">
+            Last 14 Games Stats
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey="106">
+            <GameLogStats gameLogStats={gameLogStats} numberOfGames={14} playerPosition={playerPosition} />
           </Accordion.Collapse>
         </Card>
         <Card>

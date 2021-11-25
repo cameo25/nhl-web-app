@@ -1,9 +1,10 @@
 import React from "react";
 import _ from "lodash";
-import {getPlayerStats, getFantasyPointsPlayer, getFantasyPointsGoalie} from "./helpers/PlayerHelper";
-import {getMonthlyStats} from "./helpers/StatsHelper";
+import {getFantasyPointsPlayer, getFantasyPointsGoalie} from "./helpers/PlayerHelper";
+import {getGameStats} from "./helpers/StatsHelper";
 import Card from "react-bootstrap/Card";
 import Spinner from "react-bootstrap/Spinner";
+import {roundWhenNeeded} from "./helpers/CalcHelper";
 
 export default function MonthlyStats(props) {
 
@@ -12,7 +13,7 @@ export default function MonthlyStats(props) {
   ];
 
   function renderStats() {
-    let monthlyStats = getMonthlyStats(props.monthlyStats);
+    let monthlyStats = getGameStats(props.monthlyStats);
     if (!_.isEmpty(monthlyStats)) {
       let monthlyCards = monthlyStats.map((stats, key) => {
         if (props.playerPosition === "Goalie") {
@@ -61,9 +62,9 @@ export default function MonthlyStats(props) {
       <Card.Body>
         <span>Month: {monthNames[stats.month]}</span>
         <br></br>
-        <span>Save Percentage: {stats.stat.savePercentage}</span>
+        <span>Save Percentage: {roundWhenNeeded(stats.stat.savePercentage)}</span>
         <br></br>
-        <span>Goals Against Average: {stats.stat.goalAgainstAverage}</span>
+        <span>Goals Against Average: {roundWhenNeeded(stats.stat.goalAgainstAverage)}</span>
         <br></br>
         <span>Wins: {stats.stat.wins}</span>
         <br></br>

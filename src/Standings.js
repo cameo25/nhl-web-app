@@ -3,9 +3,11 @@ import _ from "lodash";
 import {getTeamRecords} from "./helpers/StandingsHelper";
 import {roundWhenNeeded} from "./helpers/CalcHelper";
 import { Table } from "react-bootstrap";
+import { useHistory } from 'react-router-dom';
 
 export default function Standings(props) {
   const [sortConfig, setSortConfig] = useState(null);
+  const history = useHistory();
 
   const requestSort = (key) => {
     let direction = 'asc';
@@ -24,14 +26,13 @@ export default function Standings(props) {
     else {
       props.setStandings(_.orderBy(props.standings, key, direction));
     }
-    
   };
 
   function renderStandings(standings) {
     let tableRows = [];
     if (!_.isEmpty(standings)) {
       tableRows = standings.map((teamRecord) =>
-        <tr key={teamRecord.team.id}>
+        <tr role="button" onClick={() => history.push("/team/"+teamRecord.team.id)} >
           <td>{teamRecord.team.name}</td>
           <td>{teamRecord.leagueRank}</td>
           <td>{teamRecord.points}</td>
